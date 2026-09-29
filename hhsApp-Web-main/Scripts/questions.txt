@@ -1,0 +1,136 @@
+[
+  {
+    "step": 1,
+    "title": "Vessel Occlusion Assessment",
+    "prompt": "Is there documented vessel occlusion?",
+    "ifNoGoToStep": 2,
+    "trials": [
+      {
+        "name": "EASI-TOC (van Adel)",
+        "contact": "Phone: 289-775-6844",
+        "desc": "Trial of acute cervical ICA stenting during EVT for anterior circulation stroke (acute stenting during EVT vs not acute stenting during EVT)",
+        "criteria": [
+          "Anterior circulation stroke eligible for EVT",
+          "Tandem ipsilateral high grade (>70%) cervical ICA stenosis or occlusion (presumed atherosclerotic etiology)",
+          "Groin puncture within 24 hours of onset or LSW",
+          "Randomize during EVT procedure"
+        ]
+      },
+      {
+        "name": "ACT-42 (Dr Catanese)",
+        "contact": "RC Kanchana — 905 870 2203",
+        "desc": "Efficacy and Safety of NoNO-42 in Participants with Acute Ischemic Stroke Selected for Thrombolysis with or without EVT",
+        "criteria": [
+          "Ages ≥ 18 to ≤ 90 years",
+          "Acute ischemic stroke, selected for thrombolysis within 4.5 h of LSN",
+          "National Institutes of Health Stroke Scale (NIHSS) > 3",
+          "Suspected/confirmed anterior circulation intracranial occlusion"
+        ]
+      },
+      {
+        "name": "ACT-ENCHANTED (ACT GLOBAL platform)",
+        "contact": "PI Dr Katsanos — RC Kanchana — 905 870 2203",
+        "desc": "Control of Hypertension post EVT",
+        "criteria": [
+          "Use of EVT within 24 hours of symptom onset or LSN",
+          "Ages ≥ 18 years",
+          "Sustained SBP ≥150 mmHg (2 successive readings <10 mins apart) within 3h after EVT"
+        ],
+        "pdfData": null
+      },
+      {
+        "name": "REMEDY2 (Ng)",
+        "contact": "RC – Kwadjo 905 973 1298 or Shuhira 905-870-2090",
+        "desc": "DM199 for patients within 24 hours of AIS who are not eligible for EVT",
+        "criteria": [
+          "NIHSS ≥5 and ≤15",
+          "Within 24 hours of LKW",
+          "No ACE inhibitor in last 24h",
+          "No LVO"
+        ]
+      },
+      {
+        "name": "ACT-WHEN(Dr Catanese)",
+        "contact": "RC Kanchana-905 870 2203",
+        "desc": "Optimize the Use of Intravenous TNK in Participants with AIS",
+        "criteria": [
+          "Ages ≥ 18Y",
+          "Disabling AIS within 4.5h of stroke onset(No LVO/No EVT)"
+        ]
+      }
+    ]
+  },
+  {
+    "step": 2,
+    "title": "Diagnosis Verification (A)",
+    "prompt": "Is it an Intracerebral Hemorrhage (ICH)?",
+    "ifNoGoToStep": 3,
+    "trials": [
+      {
+        "name": "i-CATCHER (Katsanos)",
+        "contact": "RC Shuhira — 905 870 2090",
+        "desc": "To determine the effectiveness of implementing a structured care bundle versus usual standard of care on functional recovery for patients with acute ICH",
+        "criteria": [
+          "Spontaneous ICH confirmed with imaging",
+          "Admitted to hospital within 24h of onset "
+        ]
+      }
+    ]
+  },
+  {
+    "step": 3,
+    "title": "Diagnosis Verification (B)",
+    "prompt": "Is it an Ischemic Stroke (IS) without occlusion?",
+    "ifNoGoToStep": 4,
+    "trials": [
+      {
+        "name": "INTERCEPT (Katsanos)",
+        "contact": "RC – Kanchana- 905 870 2203",
+        "desc": "B/L Carotid Implants for PreveNtion of STrokE ReCurrEnce from Large Vessel Occlusion in\nAtrial Fibrillation Patients Treated with Oral Anticoagulation",
+        "criteria": [
+          "Documented history of clinical AF",
+          "History of ischemic stroke, including symptoms of stroke resolving within 24 hours with positive imaging,",
+          "Planned use of a Vitamin K antagonist (VKA) or a direct oral anticoagulant (DOAC)",
+          "Previously documented 50% or greater stenosis, or high-risk plaque in the opinion of the investigator"
+        ]
+      },
+      {
+        "name": "PROSPECT (Joundi)",
+        "contact": "RC- Shuhira-905 870 2090",
+        "desc": "No descriptive notes recorded.",
+        "criteria": [
+          "Ischemic stroke or ICH without pre-stroke dementia",
+          "Within 7 days of index event"
+        ]
+      }
+    ]
+  },
+  {
+    "step": 4,
+    "title": "Diagnosis Verification (C)",
+    "prompt": "Is it an Intracerebral Hemorrhage (ICH)?",
+    "ifNoGoToStep": null,
+    "trials": [
+      {
+        "name": "INTERCEPT (Katsanos)",
+        "contact": "RC – Kanchana- 905 870 2203",
+        "desc": "B/L Carotid Implants for PreveNtion of STrokE ReCurrEnce from Large Vessel Occlusion in\nAtrial Fibrillation Patients Treated with Oral Anticoagulation",
+        "criteria": [
+          "Documented history of clinical AF",
+          "History of ischemic stroke, including symptoms of stroke resolving within 24 hours with positive imaging,",
+          "Planned use of a Vitamin K antagonist (VKA) or a direct oral anticoagulant (DOAC)",
+          "Previously documented 50% or greater stenosis, or high-risk plaque in the opinion of the investigator"
+        ]
+      },
+      {
+        "name": "PROSPECT (Joundi)",
+        "contact": "RC Shuhira — 905 870 2090",
+        "desc": "No descriptive notes recorded.",
+        "criteria": [
+          "Ischemic stroke or ICH without pre-stroke dementia",
+          "Within 7 days of index event"
+        ]
+      }
+    ]
+  }
+]

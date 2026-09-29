@@ -1,0 +1,1283 @@
+/* ============================================================
+   Responsive base — fluid spacing/type scale used everywhere below.
+   ============================================================ */
+:root {
+    --space-xs: clamp(4px, 1vw, 6px);
+    --space-sm: clamp(8px, 1.5vw, 12px);
+    --space-md: clamp(12px, 2.5vw, 20px);
+    --space-lg: clamp(16px, 4vw, 32px);
+    --space-xl: clamp(20px, 5vw, 40px);
+
+    /* Modernized: Slightly softer, rounder corners */
+    --radius-lg: clamp(12px, 2vw, 16px); 
+    --radius-md: 12px;
+    --radius-sm: 8px;
+
+    --font-sm: clamp(12px, 1.1vw + 0.5rem, 13px);
+    --font-base: clamp(13px, 1.2vw + 0.5rem, 14px);
+    --font-md: clamp(15px, 1.6vw + 0.5rem, 17px);
+    --font-lg: clamp(17px, 2vw + 0.5rem, 20px);
+
+    --touch-target: 44px;
+
+    /* -------- Color tokens: LIGHT theme (default) -------- */
+    --bg-page: #f8fafc; /* Slightly softer page background */
+    --bg-surface: #ffffff;
+    --bg-surface-alt: #f1f5f9;
+    --bg-surface-alt-2: #e2e8f0;
+    --bg-input: #f8fafc;
+    --bg-success-tint: #f0fdf4;
+    --border-color: #e2e8f0;
+    --border-color-strong: #cbd5e1;
+    --border-success-tint: #bbf7d0;
+    --text-primary: #0f172a;
+    --text-secondary: #334155;
+    --text-body: #475569;
+    --text-muted: #64748b;
+    --text-faint: #94a3b8;
+    --header-bg: #ffffff; /* Modernized: Clean white header */
+    --header-text: #0f172a;
+    /* Modernized: Diffused layered shadow */
+    --shadow-color: rgba(15, 23, 42, 0.04); 
+    --shadow-elevated: 0 10px 25px -5px rgba(15, 23, 42, 0.08), 0 8px 10px -6px rgba(15, 23, 42, 0.04);
+}
+
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+        --bg-page: #020617;
+        --bg-surface: #0f172a;
+        --bg-surface-alt: #1e293b;
+        --bg-surface-alt-2: #334155;
+        --bg-input: #1e293b;
+        --bg-success-tint: #0f2b1c;
+        --border-color: #334155;
+        --border-color-strong: #475569;
+        --border-success-tint: #1f4d34;
+        --text-primary: #f8fafc;
+        --text-secondary: #cbd5e1;
+        --text-body: #94a3b8;
+        --text-muted: #94a3b8;
+        --text-faint: #64748b;
+        --header-bg: #0f172a;
+        --header-text: #f8fafc;
+        --shadow-color: rgba(0, 0, 0, 0.4);
+        --shadow-elevated: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+    }
+    :root:not([data-theme="light"]) .icon-action-btn:not(.danger) .btn-icon {
+        filter: brightness(0) invert(1);
+    }
+}
+
+[data-theme="dark"] {
+    /* Same as dark media query above */
+    --bg-page: #020617;
+    --bg-surface: #0f172a;
+    --bg-surface-alt: #1e293b;
+    --bg-surface-alt-2: #334155;
+    --bg-input: #1e293b;
+    --bg-success-tint: #0f2b1c;
+    --border-color: #334155;
+    --border-color-strong: #475569;
+    --border-success-tint: #1f4d34;
+    --text-primary: #f8fafc;
+    --text-secondary: #cbd5e1;
+    --text-body: #94a3b8;
+    --text-muted: #94a3b8;
+    --text-faint: #64748b;
+    --header-bg: #0f172a;
+    --header-text: #f8fafc;
+    --shadow-color: rgba(0, 0, 0, 0.4);
+    --shadow-elevated: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, sans-serif; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+    background-color: var(--bg-page);
+    color: var(--text-primary);
+    padding: var(--space-xl) var(--space-md);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    overflow-x: hidden;
+    -webkit-tap-highlight-color: transparent;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Modernized Dashboard Container */
+.dashboard-container {
+    width: 100%;
+    max-width: 760px;
+    background: var(--bg-surface);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-elevated);
+    border: 1px solid var(--border-color);
+    margin-bottom: 24px;
+    overflow: hidden;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.dash-header {
+    background-color: var(--header-bg);
+    color: var(--header-text);
+    padding: var(--space-md) var(--space-lg);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-sm);
+    border-bottom: 1px solid var(--border-color); /* Added subtle separator */
+}
+
+.brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.brand h1 { min-width: 0; overflow-wrap: anywhere; }
+.pulse-icon { width: 12px; height: 12px; background-color: #10b981; border-radius: 50%; box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.2); flex-shrink: 0; }
+.dash-header h1 { font-size: var(--font-lg); font-weight: 700; letter-spacing: -0.02em; }
+.header-controls { display: flex; flex-wrap: wrap; gap: 8px; }
+
+/* 1. Unified & Modernized Button System */
+.btn-base, .ctrl-btn,  .side-btn,.submit-btn, .add-trigger, .save-btn, .cancel-btn, .add-option-btn, .continue-btn {
+    padding: 10px 16px;
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+    font-size: var(--font-sm);
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    border: none;
+    min-height: var(--touch-target);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    white-space: nowrap;
+}
+
+.ctrl-btn {
+    background: var(--bg-surface-alt-2);
+    color: var(--text-primary);
+}
+
+.ctrl-btn:hover {
+    background: var(--border-color-strong);
+    transform: translateY(-1px);
+}
+
+/* Primary Action Buttons */
+.submit-btn, .add-trigger, .save-btn, .add-option-btn, .continue-btn {
+    background: #3b82f6 !important;
+    color: white !important;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+}
+.submit-btn:hover, .add-trigger:hover, .save-btn:hover, .add-option-btn:hover, .continue-btn:hover {
+    background: #2563eb !important;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(59, 130, 246, 0.3);
+}
+
+.cancel-btn { background-color: var(--text-muted); color: white; }
+.cancel-btn:hover { background-color: var(--text-secondary); transform: translateY(-1px); }
+
+/* Danger/Logout Buttons */
+#logout-button, .danger-btn {
+    background: #ef4444 !important;
+    color: white !important;
+}
+#logout-button:hover {
+    background: #dc2626 !important;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(239, 68, 68, 0.3);
+}
+
+/* Control Page Form Styles */
+.creator-header { background-color: var(--header-bg); }
+.creator-intro {
+    padding: var(--space-lg);
+    background: var(--bg-surface);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-sm);
+}
+.creator-intro h2 { font-size: var(--font-lg); color: var(--text-primary); display: flex; align-items: center; gap: 10px; flex-wrap: wrap; font-weight: 700;}
+.step-counter-badge { background: #eff6ff; color: #3b82f6; padding: 4px 12px; border-radius: 20px; font-size: var(--font-sm); font-weight: 700; }
+.creator-intro p { font-size: var(--font-sm); color: var(--text-muted); max-width: 100%; flex: 1 1 260px; text-align: right; }
+
+.management-form { display: flex; flex-direction: column; gap: var(--space-lg); padding: 0 var(--space-lg) var(--space-lg); }
+
+/* Modernized Form Section */
+.form-section { background: var(--bg-page); border: 1px solid var(--border-color); padding: var(--space-lg); border-radius: var(--radius-md); }
+.form-section h3 { font-size: var(--font-sm); color: var(--text-secondary); text-transform: uppercase; margin-bottom: var(--space-md); letter-spacing: 0.05em; font-weight: 700; }
+
+.form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: var(--space-md); }
+.full-width { grid-column: 1 / -1; }
+.form-grid label, .bullet-builder-block label { display: flex; flex-direction: column; font-size: var(--font-sm); font-weight: 600; color: var(--text-body); gap: 8px; }
+
+/* Modernized Inputs */
+.form-grid input, .form-grid textarea, .bullet-input-row input {
+    padding: 12px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    font-size: 16px; 
+    color: var(--text-primary);
+    width: 100%;
+    background: var(--bg-surface);
+    min-height: var(--touch-target);
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 2px var(--shadow-color) inset;
+}
+.form-grid textarea { min-height: 120px; resize: vertical; }
+.form-grid input:focus, .form-grid textarea:focus { background: var(--bg-surface); border-color: #3b82f6; outline: none; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15); }
+
+/* Interactive Bullet Component */
+.bullet-builder-block { margin-top: var(--space-md); display: flex; flex-direction: column; gap: 8px; }
+.bullet-input-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.bullet-input-row input { flex: 1 1 200px; }
+.add-bullet-btn {
+    background: #d1fae5;
+    color: #065f46;
+    border: none;
+    padding: 0 16px;
+    font-weight: 700;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-size: var(--font-sm);
+    min-height: var(--touch-target);
+    flex-shrink: 0;
+    transition: all 0.2s ease;
+}
+.add-bullet-btn:hover { background: #10b981; color: white; }
+
+.live-bullet-preview { list-style: none; margin-top: 8px; display: flex; flex-direction: column; gap: 8px; }
+.live-bullet-preview li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    padding: 10px 14px;
+    border-radius: var(--radius-sm);
+    font-size: var(--font-sm);
+    color: var(--text-secondary);
+    gap: 8px;
+    box-shadow: 0 1px 2px var(--shadow-color);
+}
+.del-bullet-btn { background: none; border: none; color: #ef4444; font-size: 18px; cursor: pointer; font-weight: bold; line-height: 1; flex-shrink: 0; min-width: 32px; min-height: 32px; border-radius: 4px; transition: background 0.2s ease; }
+.del-bullet-btn:hover { background: #fef2f2; }
+
+/* Screening View Classes */
+.dash-content { padding: var(--space-lg) var(--space-lg) 0; display: flex; flex-direction: column; gap: var(--space-lg); }
+
+/* Modernized Step Card */
+.step-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: var(--space-lg);
+    display: flex;
+    gap: var(--space-md);
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px var(--shadow-color);
+}
+.step-card:hover { box-shadow: 0 4px 12px var(--shadow-color); }
+.step-card.active-card { 
+    border-color: #bfdbfe; 
+    background: var(--bg-surface); 
+    box-shadow: 0 0 0 2px #3b82f6; 
+}
+.card-num { font-size: clamp(18px, 3vw, 24px); font-weight: 800; color: var(--border-color-strong); flex-shrink: 0; }
+.question-body { flex: 1; min-width: 0; }
+.question-body h3 { font-size: var(--font-sm); color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700; overflow-wrap: anywhere; }
+
+.question-prompt { 
+    font-size: var(--font-md); 
+    font-weight: 500; 
+    color: var(--text-primary); 
+    margin-top: 8px;
+    margin-bottom: 24px; 
+    overflow-wrap: anywhere; 
+    line-height: 1.5;
+}
+
+.action-buttons { display: flex; flex-wrap: wrap; gap: 12px; }
+.btn {
+    flex: 1 1 100px;
+    padding: 12px 20px;
+    font-size: var(--font-base);
+    font-weight: 600;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 2px solid transparent;
+    min-height: var(--touch-target);
+}
+.btn-yes { background-color: #f0f9ff; color: #0284c7; border-color: #bae6fd; }
+.btn-yes:hover, .btn-yes.selected { background-color: #0284c7; color: #ffffff; border-color: #0284c7; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(2, 132, 199, 0.2); }
+.btn-no { background-color: #fef2f2; color: #dc2626; border-color: #fecaca; }
+.btn-no:hover, .btn-no.selected { background-color: #dc2626; color: #ffffff; border-color: #dc2626; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(220, 38, 38, 0.2); }
+
+.results-wrapper { background: var(--bg-page); border: 1px dashed var(--border-color-strong); border-radius: var(--radius-md); padding: var(--space-lg); margin-bottom: 20px; }
+.results-bar-header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: var(--space-md); }
+.badge { background: var(--text-primary); color: var(--bg-surface); padding: 6px 12px; border-radius: 20px; font-size: var(--font-sm); font-weight: 700; }
+.trial-panel { background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: var(--space-md); margin-bottom: 12px; box-shadow: 0 1px 3px var(--shadow-color); }
+.trial-title-row { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px; margin-bottom: 8px; }
+.trial-name { font-size: var(--font-md); font-weight: 700; color: var(--text-primary); overflow-wrap: anywhere; }
+.trial-contact { font-size: var(--font-sm); color: #ef4444; font-weight: 700; overflow-wrap: anywhere; }
+.trial-desc { font-size: var(--font-base); color: var(--text-muted); font-style: italic; margin-bottom: 12px; overflow-wrap: anywhere; line-height: 1.5; }
+.trial-crit-list { font-size: var(--font-base); color: var(--text-secondary); padding-left: 20px; line-height: 1.6; }
+
+.dash-footer { padding: var(--space-lg); border-top: 1px solid var(--border-color); background: var(--bg-surface); display: flex; justify-content: flex-end; }
+.reset-btn {
+    background: transparent;
+    border: 1px solid var(--border-color-strong);
+    padding: 10px 20px;
+    border-radius: var(--radius-sm);
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-weight: 600;
+    min-height: var(--touch-target);
+    transition: all 0.2s ease;
+}
+.reset-btn:hover { background: var(--bg-surface-alt-2); color: var(--text-primary); }
+.hidden { display: none !important; }
+
+/* Inline Card Title Management Layout Row Rules */
+.card-title-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+.edit-step-inline-btn {
+    background: var(--bg-page);
+    color: var(--text-body);
+    border: 1px solid var(--border-color);
+    padding: 6px 12px;
+    font-size: var(--font-sm);
+    font-weight: 700;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-height: 36px;
+}
+.edit-step-inline-btn:hover {
+    background: var(--bg-surface-alt-2);
+    color: var(--text-primary);
+    border-color: var(--border-color-strong);
+}
+/* Manage mode's title row keeps icons top-aligned since titles there are
+   editable/longer on average — matches the old inline style it replaces. */
+.manage-title-row { align-items: flex-start; }
+
+.edit-step-inline-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* Compact uniform icon-only controls */
+.step-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    flex-shrink: 0;
+    margin-bottom: 8px;
+}
+.icon-action-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    background: var(--bg-surface);
+    color: var(--text-body);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s ease;
+    padding: 0;
+}
+.icon-action-btn:hover {
+    background: var(--bg-surface-alt-2);
+    color: var(--text-primary);
+    border-color: var(--border-color-strong);
+}
+.icon-action-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+.icon-action-btn-pencil {
+    /* Nudged up slightly relative to the other icon buttons in this row */
+    position: relative;
+    top: -2px;
+}
+
+/* Pencil icon (<img>) sitting inline next to text — e.g. "✏️ Edit Option"
+   or a heading like "✏️ Modify Trial Option: ...". Images default to
+   vertical-align: baseline, which sits them low against the text baseline
+   (looks "dropped" compared to the letters beside it) — middle alignment
+   plus a small extra lift fixes that so it reads as sitting on the same
+   line as the text, not hanging slightly below it. */
+.btn-icon-pencil{
+    width: 14px;
+    height: 14px;
+    vertical-align: middle;
+    position: relative;
+    top: -1px;
+    margin-right: 2px;
+}
+.btn-icon-trash{
+    width: 14px;
+    height: 14px;
+    vertical-align: middle;
+    position: relative;
+    top: -1px;
+    margin-right: 2px;
+}
+.icon-action-btn.danger {
+    background: #fef2f2;
+    color: #ef4444;
+    border-color: #fecaca;
+}
+.icon-action-btn.danger:hover {
+    background: #ef4444;
+    color: #ffffff;
+    border-color: #ef4444;
+}
+/* In dark mode, .icon-action-btn's background goes near-black (var(--bg-
+   surface)), but its icon <img> files are fixed dark line-art that ignore
+   theme variables entirely (color/CSS vars don't affect img content) —
+   without this they'd be nearly invisible. The danger/delete button is
+   excluded since it already has a fixed light pink background regardless
+   of theme, so its icon has fine contrast without inverting. */
+[data-theme="dark"] .icon-action-btn:not(.danger) .btn-icon {
+    filter: brightness(0) invert(1);
+}
+.reorder-stack {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+}
+.reorder-stack .icon-action-btn {
+    width: 36px;
+    height: 18px;
+    border: none;
+    border-radius: 0;
+    font-size: 10px;
+    background: var(--bg-surface);
+}
+.reorder-stack .icon-action-btn:first-child {
+    border-bottom: 1px solid var(--border-color);
+}
+.reorder-stack .icon-action-btn:hover { background: var(--bg-surface-alt-2); }
+
+/* Manage Mode */
+#dynamicQuestionsContainer.manage-mode {
+    gap: 16px;
+}
+.manage-card {
+    padding: var(--space-md) var(--space-lg);
+}
+.manage-card .question-prompt {
+    font-size: var(--font-base);
+    font-weight: 400;
+    color: var(--text-muted);
+    margin-bottom: 0;
+}
+
+/* Multi-Option Queue Styling */
+.queued-options-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 8px;
+}
+.empty-state-text {
+    font-size: var(--font-base);
+    color: var(--text-faint);
+    font-style: italic;
+    padding: 12px 0;
+    text-align: center;
+}
+.queued-trial-item-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    padding: var(--space-md);
+    border-radius: var(--radius-sm);
+    box-shadow: 0 1px 2px var(--shadow-color);
+    cursor: grab;
+    transition: opacity 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.queued-trial-item-row:active {
+    cursor: grabbing;
+}
+.queued-trial-item-row.is-dragging {
+    opacity: 0.45;
+}
+.queued-trial-item-row.is-drag-over {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.18);
+}
+.queued-trial-drag-handle {
+    flex: 0 0 auto;
+    color: #64748b;
+    font-size: 20px;
+    line-height: 1;
+    cursor: grab;
+    user-select: none;
+}
+.queued-item-meta {
+    flex: 1 1 200px;
+    min-width: 0;
+    font-size: var(--font-base);
+    color: var(--text-primary);
+    overflow-wrap: anywhere;
+    font-weight: 500;
+}
+.remove-option-from-queue-btn {
+    background: #fef2f2;
+    color: #ef4444;
+    border: 1px solid #fecaca;
+    padding: 8px 12px;
+    font-size: var(--font-sm);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-weight: 600;
+    min-height: 36px;
+    transition: all 0.2s ease;
+}
+.remove-option-from-queue-btn:hover {
+    background: #ef4444;
+    color: white;
+}
+
+/* Form block sub-divider cards */
+.trial-builder-card {
+    background-color: var(--bg-success-tint) !important;
+    border: 1px solid var(--border-success-tint) !important;
+}
+
+/* Layout Alignment Controls for Options list buttons */
+.queued-item-control-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+.edit-option-inline-btn {
+    background: #f0f9ff;
+    color: #0284c7;
+    border: 1px solid #bae6fd;
+    padding: 8px 12px;
+    font-size: var(--font-sm);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-weight: 600;
+    min-height: 36px;
+    transition: all 0.2s ease;
+}
+.edit-option-inline-btn:hover {
+    background: #0284c7;
+    color: white;
+}
+.option-form-actions-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 20px;
+}
+.option-form-actions-row .add-option-btn {
+    margin-top: 0 !important;
+    flex: 1 1 160px;
+}
+
+/* Edit State Accent Pulser Border Style Effect */
+.editing-active-pulse {
+    border: 2px solid #3b82f6 !important;
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15) !important;
+}
+
+
+/* ============================================================
+   Floating Sidebar Container (Theme Matched to Web Page)
+   ============================================================ */
+#hhsSidebar {
+    background-color: var(--bg-surface); /* Matches the main white UI cards */
+    color: var(--text-primary);
+    border: 1px solid var(--border-color); /* Subtle border to blend in */
+    
+    position: fixed;
+    top: 24px;
+    left: -320px; 
+    height: calc(100vh - 48px);
+    width: 260px;
+    border-radius: var(--radius-lg);
+    padding: 24px 20px;
+    
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    
+    box-shadow: var(--shadow-elevated);
+    z-index: 9999;
+    transition: left 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+#hhsSidebar.sidebar-open {
+    left: 24px; 
+}
+
+/* ============================================================
+   Floating Account Info (Bottom Right Corner)
+   ============================================================ */
+.user-profile-floating {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-elevated);
+    border-radius: 50px;
+    padding: 8px 20px 8px 8px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    z-index: 9999;
+}
+
+.user-profile-floating .user-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: #cbd5e1; /* The soft gray avatar placeholder */
+}
+
+.user-profile-floating .user-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.user-profile-floating .user-name { 
+    font-size: 15px; 
+    font-weight: 600; 
+    color: var(--text-primary, #0f172a); 
+    line-height: 1.2;
+}
+
+.user-profile-floating .user-role { 
+    font-size: 13px; 
+    color: var(--text-muted, #64748b); 
+    line-height: 1.2;
+    margin-top: 2px;
+}
+
+/* ============================================================
+   Sidebar Navigation Buttons (Blue 'Add Step' Style)
+   ============================================================ */
+.side-btn {
+    width: 100%;
+    /* Blue background matching the 'Add Step' button */
+    background: #3b82f6 !important; 
+    border: none !important;
+    color: #ffffff !important; 
+    text-align: left;
+    padding: 12px 16px;
+    border-radius: var(--radius-sm);
+    font-size: var(--font-base);
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px; 
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2) !important;
+}
+
+/* Label sits on the left; icon (added after it in markup) is pushed to
+   the right by justify-content: space-between above. Buttons with no
+   icon span (plain text only) are unaffected — a single flex item still
+   sits flush left. */
+.side-btn-label {
+    text-align: left;
+}
+.side-btn-icon {
+    flex-shrink: 0;
+    line-height: 1;
+}
+.side-btn-icon img {
+    display: block;
+    width: 18px;
+    height: 18px;
+    /* Side-btn backgrounds are solid colors with white text (see .side-btn
+       color: #ffffff !important above) — this forces any SVG, regardless
+       of its own fill color, to render pure white so it matches. Remove
+       this if you're using an SVG that's already the right color. */
+    filter: brightness(0) invert(1);
+}
+
+/* Generic sizing for an <img>-based icon inside any button (header
+   buttons like Add Step, not just sidebar ones). Color isn't forced here
+   since .ctrl-btn backgrounds vary — see the .add-trigger override below
+   for buttons that specifically need a white icon. */
+.btn-icon {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    vertical-align: middle;
+}
+.add-trigger .btn-icon {
+    /* .add-trigger forces white text (color: white !important above) —
+       match that regardless of the SVG's own fill color. Remove this
+       filter if the SVG file is already white. */
+    filter: brightness(0) invert(1);
+    position: relative;
+    left: 2px;
+}
+#hhsManageModeBtn .btn-icon {
+    /* Same reasoning as .add-trigger above — this button's inline style
+       sets a solid cyan background with white text either state. */
+    filter: brightness(0) invert(1);
+}
+#importTriggerBtn .btn-icon, .save-btn .btn-icon {
+    /* Same reasoning again — both these buttons have white text
+       (#importTriggerBtn via inline style, .save-btn via the shared
+       .submit-btn/.save-btn/etc rule) but a plain <img> icon ignores the
+       CSS `color` property entirely, so it needs this filter instead. */
+    filter: brightness(0) invert(1);
+}
+
+/* Hover state: darker blue matching 'Add Step' hover */
+.side-btn:hover, .side-btn.active {
+    background: #2563eb !important;
+    color: #ffffff !important;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(59, 130, 246, 0.3) !important;
+}
+
+/* Subheading ("SHORTCUTS") */
+.sidebar-header-text {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin: 16px 0 8px;
+    padding: 0 16px;
+}
+
+/* ============================================================
+   Brand, Search, and User Footer Elements
+   ============================================================ */
+.sidebar-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 24px;
+    padding: 0 8px;
+    color: var(--text-primary);
+}
+
+.sidebar-brand-icon {
+    width: 28px;
+    height: 28px;
+    background: #3b82f6; 
+    border-radius: 8px 8px 8px 2px; 
+}
+
+.sidebar-search {
+    background: var(--bg-input);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    padding: 12px 16px;
+    margin-bottom: 20px;
+    color: var(--text-primary);
+    font-size: var(--font-sm);
+    width: 100%;
+    transition: all 0.2s ease;
+}
+.sidebar-search::placeholder {
+    color: var(--text-faint);
+}
+.sidebar-search:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+/* ============================================================
+   Sidebar Footer (Bottom Left Alignment)
+   ============================================================ */
+/* ============================================================
+   Sidebar Footer (Full-Width Logout)
+   ============================================================ */
+.sidebar-footer {
+    display: flex;
+    padding-top: 20px;
+    border-top: 1px solid var(--border-color); 
+    margin-top: auto; 
+}
+
+/* Full-width Logout Button */
+#logout-button.side-btn {
+    width: 100% !important; /* Forces it to fill the entire footer space */
+    height: auto;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background: transparent !important; 
+    color: #ef4444 !important; /* Keeps the danger red */
+    border: 1px solid #fecaca !important; /* Subtle red border */
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+}
+
+#logout-button.side-btn:hover {
+    background: #ef4444 !important;
+    color: #ffffff !important;
+    border-color: #ef4444 !important;
+}
+/* ============================================================
+   Breakpoints 
+   ============================================================ */
+@media (max-width: 900px) {
+    .dashboard-container { max-width: 100%; }
+}
+
+@media (max-width: 640px) {
+    body { padding: 0 !important; width: 100vw; overflow-x: hidden; }
+    
+    /* Remove container framing for a full-bleed mobile feel */
+    .dashboard-container { border: none; border-radius: 0; box-shadow: none; margin: 0; }
+
+    /* Header: roomier, still simple */
+    .dash-header { padding: 16px 20px; gap: 10px; }
+    .dash-header h1 { font-size: 17px; }
+    .header-controls { gap: 8px; }
+    .header-controls .ctrl-btn { 
+        padding: 8px 14px; 
+        font-size: 13px; 
+        min-height: 40px; 
+    }
+
+    /* Cards: generous, uncramped spacing */
+    .dash-content { padding: 16px; gap: 16px; }
+    .step-card { padding: 16px; gap: 12px; border-radius: 14px; }
+    .card-num { font-size: 16px; }
+
+    /* Title row: title and action icons stay level, on one row */
+    .card-title-row {
+        flex-direction: row;
+        flex-wrap: nowrap;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 14px;
+    }
+
+    /* Text: clearer hierarchy, title can wrap to 2 lines instead of squeezing */
+    .question-body h3 { font-size: 12px; line-height: 1.4; margin-bottom: 0; letter-spacing: 0.04em; flex: 1 1 auto; min-width: 0; }
+    .question-prompt { font-size: 15px; margin: 10px 0 16px 0; line-height: 1.45; }
+
+    /* Controls: compact icons pinned to the right, level with the title */
+    .step-controls { flex-shrink: 0; margin-bottom: 0; gap: 6px; }
+    .icon-action-btn { width: 30px; height: 30px; font-size: 12px; }
+    .reorder-stack .icon-action-btn { width: 30px; height: 15px; }
+
+    /* Yes/No Buttons: roomier tap targets */
+    .action-buttons { gap: 10px; }
+    .action-buttons .btn { 
+        flex: 1 1 45%; 
+        padding: 12px 16px; 
+        font-size: 14px; 
+        min-height: 44px; 
+    }
+    
+    /* Footer */
+    .dash-footer { padding: 16px; }
+}
+
+/* Further reduction for small phones */
+@media (max-width: 380px) {
+    .dash-header h1 { font-size: 15px; }
+    .question-body h3 { font-size: 11px; }
+    .icon-action-btn { width: 28px; height: 28px; }
+    .reorder-stack .icon-action-btn { width: 28px; height: 14px; }
+}
+
+
+@media (orientation: landscape) and (max-width: 900px) {
+    .dashboard-container { 
+        margin: 10px auto; 
+        padding-bottom: 10px; 
+    }
+    .dash-header { padding: 10px 20px; }
+}
+
+@media (max-width: 640px) {
+    #hhsSidebar {
+        top: auto !important;
+        bottom: -100% !important; 
+        right: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        height: 55vh;
+        max-height: 80vh;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        border-radius: 24px 24px 0 0 !important;
+        transition: bottom 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+        border-left: none;
+        border-top: 1px solid rgba(255,255,255,0.1);
+    }
+    
+    #hhsSidebar.sidebar-open {
+        bottom: 0 !important;
+    }
+
+    /* Drag handle for the bottom-sheet gesture (sidebar-drag.js) */
+    .hhs-sidebar-handle {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-shrink: 0;
+        padding: 6px 0 14px;
+        margin: -8px -4px 2px;
+        cursor: grab;
+        touch-action: none;
+    }
+    .hhs-sidebar-handle::before {
+        content: "";
+        width: 40px;
+        height: 5px;
+        border-radius: 3px;
+        background: var(--border-color-strong);
+    }
+}
+
+/* The handle is a mobile-only affordance — the desktop sidebar slides in
+   from the left and isn't height-draggable, so never show it there. */
+@media (min-width: 641px) {
+    .hhs-sidebar-handle { display: none; }
+}
+
+/* ============================================================
+   Custom Toast Notifications (Error / Success Popups)
+   ============================================================ */
+.toast-container {
+    position: fixed;
+    top: 24px;
+    right: 24px;
+    z-index: 10000;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    pointer-events: none; 
+}
+
+.toast {
+    background-color: var(--bg-surface);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-elevated);
+    padding: 16px 20px;
+    min-width: 320px;
+    max-width: 400px;
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    pointer-events: auto; 
+    opacity: 0;
+    transform: translateX(120%);
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.toast.show {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.toast.toast-error {
+    border-left: 4px solid #ef4444;
+}
+
+.toast.toast-error .toast-title {
+    color: #ef4444;
+}
+
+.toast.toast-success {
+    border-left: 4px solid #10b981;
+}
+
+.toast.toast-success .toast-title {
+    color: #10b981;
+}
+
+.toast-content {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+}
+
+.toast-title {
+    font-weight: 700;
+    font-size: var(--font-base);
+}
+
+.toast-message {
+    font-size: var(--font-sm);
+    color: var(--text-muted);
+    line-height: 1.4;
+}
+
+.toast-close {
+    background: none;
+    border: none;
+    color: var(--text-faint);
+    cursor: pointer;
+    font-size: 20px;
+    line-height: 1;
+    padding: 4px;
+    border-radius: var(--radius-sm);
+    transition: all 0.2s ease;
+}
+
+.toast-close:hover {
+    background: var(--bg-surface-alt-2);
+    color: var(--text-primary);
+}
+
+/* Mobile adjustments */
+@media (max-width: 640px) {
+    .toast-container {
+        top: 16px;
+        right: 16px;
+        left: 16px;
+    }
+    .toast {
+        min-width: 0;
+        width: 100%;
+        max-width: none;
+    }
+}
+
+/* ============================================================
+   Role separation — view-only accounts (see fetchUserRole() /
+   applyRoleToUI() in firebase-sync.js, which toggles this class on
+   <body>). Hides every control that mutates protocol data; leaves
+   the guided Yes/No screening flow, Export, History, and Logout
+   untouched since those aren't editing actions.
+   ============================================================ */
+body.view-only-mode .add-trigger,      
+body.view-only-mode .step-controls,    
+body.view-only-mode #hhsManageModeBtn,  
+body.view-only-mode #importTriggerBtn,
+body.view-only-mode #hhsRestoreBackupBtn {
+    display: none !important;
+}
+
+.remember-me-checkbox {
+    margin: 15px 0px 0px;
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    color: #334155; 
+    font-size: var(--font-sm); 
+    font-weight: var(--font-weight-medium);
+}
+/* 1. Hide the real checkbox */
+.remember-checkbox {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    border: 1px solid #cbd5e1;
+    border-radius: 4px;
+    background-color: #ffffff;
+    cursor: pointer;
+    vertical-align: middle;
+    margin-right: 8px;
+}
+
+/* 2. Style the checked state */
+.remember-checkbox:checked {
+    background-color: #3b82f6; /* Your primary button color */
+    border-color: #3b82f6;
+}
+
+/* 3. Add the checkmark icon */
+.remember-checkbox:checked::after {
+    content: '✓';
+    color: white;
+    font-size: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.newTitle .newPrompt {
+    width: 100%; 
+    box-sizing: border-box; 
+    display: block;
+    padding: 8px; 
+    border: 1px solid var(--border-color); 
+    border-radius: 4px;
+    resize: vertical; 
+    background:var(--bg-surface);
+}
+
+/* Brief highlight applied to a step card scrolled to via a ?step=N deep
+   link (see handleDeepLinkStep() in workflow-ui.js) — makes it obvious
+   which card the link/QR code was pointing at. */
+.deep-link-highlight {
+    animation: hhsDeepLinkPulse 1.5s ease-in-out 2;
+}
+@keyframes hhsDeepLinkPulse {
+    0%, 100% { box-shadow: 0 0 0 3px #2563eb, 0 0 20px rgba(37, 99, 235, 0.5); }
+    50% { box-shadow: 0 0 0 6px #2563eb, 0 0 30px rgba(37, 99, 235, 0.8); }
+}
+#newCardColor {
+    -webkit-appearance: none;
+    appearance: none;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    width: 100%;
+    height: 44px;
+    background: var(--bg-surface);
+    cursor: pointer;
+    padding: 4px;
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 2px var(--shadow-color) inset;
+}
+
+#newCardColor:focus {
+    border-color: #3b82f6;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+#newCardColor::-webkit-color-swatch-wrapper {
+    padding: 0;
+}
+
+#newCardColor::-webkit-color-swatch {
+    border: none;
+    border-radius: calc(var(--radius-sm) - 4px);
+}
+
+#newCardColor::-moz-color-swatch {
+    border: none;
+    border-radius: calc(var(--radius-sm) - 4px);
+}
+
+#cardColorStatus {
+    font-size: var(--font-sm);
+    color: var(--text-muted);
+    font-weight: 500;
+    margin-top: 6px;
+    display: block;
+}
+.card-color-container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border-color);
+}
+
+.color-label {
+    font-size: var(--font-sm);
+    font-weight: 600;
+    color: var(--text-main);
+}
+
+.color-presets {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+}
+
+.preset-btn {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: transform 0.15s ease, border-color 0.15s ease;
+    padding: 0;
+}
+
+.preset-btn:hover {
+    transform: scale(1.1);
+}
+
+.preset-btn.active {
+    border-color: var(--text-main);
+    transform: scale(1.1);
+}
+
+.clear-preset {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    color: var(--text-muted);
+    font-size: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.custom-color-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+#newCardColor {
+    -webkit-appearance: none;
+    appearance: none;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    width: 44px;
+    height: 36px;
+    background: var(--bg-surface);
+    cursor: pointer;
+    padding: 2px;
+    transition: all 0.2s ease;
+}
+
+#newCardColor:focus {
+    border-color: #3b82f6;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+#newCardColor::-webkit-color-swatch-wrapper { padding: 0; }
+#newCardColor::-webkit-color-swatch { border: none; border-radius: calc(var(--radius-sm) - 4px); }
+#newCardColor::-moz-color-swatch { border: none; border-radius: calc(var(--radius-sm) - 4px); }
+
+#cardColorStatus {
+    font-size: var(--font-xs, 12px);
+    color: var(--text-muted);
+    font-weight: 500;
+}

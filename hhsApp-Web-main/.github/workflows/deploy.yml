@@ -1,0 +1,82 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      # Replace the __FIREBASE_...__ placeholder tokens in firebase-sync.js
+      # with the real values, pulled from encrypted GitHub Secrets. This only
+      # happens inside this throwaway build runner — the real values never
+      # get written back into the repo or git history.
+      #
+      # Locates firebase-sync.js wherever it actually lives in the repo
+      # (root or a subfolder) instead of assuming a fixed path.
+      - name: Locate firebase-sync.js
+        id: locate
+        run: |
+          FILE=$(find . -type f -name "firebase-sync.js" -not -path "./.git/*" | head -n 1)
+          if [ -z "$FILE" ]; then
+            echo "::error::Could not find firebase-sync.js anywhere in this repo."
+            echo "Repo contents for reference:"
+            find . -not -path "./.git/*" -type f
+            exit 1
+          fi
+          echo "Found firebase-sync.js at: $FILE"
+          echo "path=$FILE" >> "$GITHUB_OUTPUT"
+
+      - name: Inject Firebase config
+        run: |
+          FILE="${{ steps.locate.outputs.path }}"
+          sed -i "s|__FIREBASE_API_KEY__|${{ secrets.FIREBASE_API_KEY }}|g" "$FILE"
+          sed -i "s|__FIREBASE_AUTH_DOMAIN__|${{ secrets.FIREBASE_AUTH_DOMAIN }}|g" "$FILE"
+          sed -i "s|__FIREBASE_PROJECT_ID__|${{ secrets.FIREBASE_PROJECT_ID }}|g" "$FILE"
+          sed -i "s|__FIREBASE_STORAGE_BUCKET__|${{ secrets.FIREBASE_STORAGE_BUCKET }}|g" "$FILE"
+          sed -i "s|__FIREBASE_MESSAGING_SENDER_ID__|${{ secrets.FIREBASE_MESSAGING_SENDER_ID }}|g" "$FILE"
+          sed -i "s|__FIREBASE_APP_ID__|${{ secrets.FIREBASE_APP_ID }}|g" "$FILE"
+          sed -i "s|__FIREBASE_SYNC_PASSCODE__|${{ secrets.FIREBASE_SYNC_PASSCODE }}|g" "$FILE"
+
+      - name: Verify injection succeeded
+        run: |
+          FILE="${{ steps.locate.outputs.path }}"
+          if grep -qE "__FIREBASE_[A-Z_]+__" "$FILE"; then
+            echo "::error::One or more Firebase secrets are missing — placeholder tokens are still present in $FILE. Check Repo Settings > Secrets and variables > Actions."
+            grep -E "__FIREBASE_[A-Z_]+__" "$FILE"
+            exit 1
+          fi
+          echo "All Firebase config placeholders were replaced successfully in $FILE."
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

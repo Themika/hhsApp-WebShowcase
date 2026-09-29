@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HHS Stroke Algorithm </title>
+    <link rel="stylesheet" href="Styles/style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
+</head>
+    <body>
+        <!-- ========================================== -->
+        <!-- 1. LOGIN SCREEN (Visible by default)       -->
+        <!-- ========================================== -->
+        <div class="dashboard-container" id="login-container" style="max-width: 450px; margin: 10vh auto; padding: 30px; text-align: center;">
+            <header class="dash-header" style="justify-content: center; margin-bottom: 20px;">
+                <div class="brand">
+                    <span class="pulse-icon"></span>
+                    <h2>Team Secure Login</h2>
+                </div>
+            </header>
+            
+            <div id="loginFormFields">
+                <div class="form-group" style="margin-bottom: 15px; text-align: left;">
+                    <label for="email-input" style="display: block; margin-bottom: 6px; font-weight: 600; color: #334155;">Email Address</label>
+                    <input type="email" id="email-input" placeholder="Enter team email" style="width: 100%; box-sizing: border-box; padding: 10px; border: 1px solid #cbd5e1; border-radius: 4px;" />
+                </div>
+                
+                <div class="form-group" style="margin-bottom: 20px; text-align: left;">
+                    <label for="password-input" style="display: block; margin-bottom: 6px; font-weight: 600; color: #334155;">Password</label>
+                    <input type="password" id="password-input" placeholder="Enter password" style="width: 100%; box-sizing: border-box; padding: 10px; border: 1px solid #cbd5e1; border-radius: 4px;" />
+                </div>
+                
+                <!-- Login Button -->
+                <button type="button" id="login-button" class="submit-btn active-submit" style="width: 100%; margin-bottom: 10px;">Authenticate & Log In</button>
+                
+                <!-- Register Button -->
+                <button type="button" id="register-button" class="ctrl-btn" style="width: 100%; background: #64748b; color: white;">Create New Account</button>
+                <label class="remember-me-checkbox">
+                    <input type="checkbox" id="remember-checkbox" class="remember-checkbox"> Remember Me
+                </label>
+                <!-- NEW: Forgot Password Button -->
+                <button type="button" id="forgot-password-button" style="background: none; border: none; color: #0284c7; cursor: pointer; text-decoration: underline; font-size: 13px; width: 100%; margin-top: 10px;">Forgot Password?</button>
+            </div>
+
+            <!-- Shown instead of the form above when someone is signed in
+                 but hasn't clicked the verification link in their email yet.
+                 See checkEmailVerification() in firebase-sync.js. -->
+            <div id="verifyEmailNotice" class="hidden" style="margin-top: 10px; padding: 15px; background: #fffbeb; border: 1px solid #fde68a; border-radius: 6px; text-align: left;">
+                <p style="margin: 0 0 10px; color: #92400e; font-weight: 700;">Please verify your email</p>
+                <p id="verifyEmailMessage" style="margin: 0 0 12px; color: #78350f; font-size: 13px;"></p>
+                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                    <button type="button" id="resendVerificationBtn" class="ctrl-btn" style="background: #d97706; color: white; font-size: 13px; padding: 8px 12px;">Resend Email</button>
+                    <button type="button" id="refreshVerificationBtn" class="ctrl-btn" style="background: #64748b; color: white; font-size: 13px; padding: 8px 12px;">I've Verified — Refresh</button>
+                    <button type="button" id="signOutUnverifiedBtn" class="ctrl-btn" style="background: #94a3b8; color: white; font-size: 13px; padding: 8px 12px;">Sign Out</button>
+                </div>
+            </div>
+            
+            <p id="login-error" style="color: #dc2626; display: none; margin-top: 15px; font-weight: 600; background: #fee2e2; padding: 10px; border-radius: 4px;"></p>
+            <div class="toast-container" id="toastContainer"></div>
+        </div>
+
+
+        <!-- ========================================== -->
+        <!-- 2. MAIN APPLICATION (Hidden until logged in)-->
+        <!-- ========================================== -->
+        <div id="app-container" style="display: none;">
+            
+            <div class="dashboard-container" id="screeningView">
+                <header class="dash-header">
+                    <div class="brand">
+                        <span class="pulse-icon"></span>
+                        <h1>HHS Stroke Algorithm</h1>
+                    </div>
+                    <div class="header-controls" style="display: flex; gap: 8px; align-items: center;">
+                        <input type="file" id="importTxtInput" accept=".txt,application/json" style="display: none;">
+                        <button type="button" id="importTriggerBtn" class="ctrl-btn" style="background: #0284c7; color: white;" onclick="triggerTxtImport()">
+                            Import
+                            <img src="images/import-svgrepo-com.svg" alt="" class="btn-icon">
+                        </button>
+                        <button type="button" id="importTriggerBtn" style="background: #0284c7; color: white;" class="ctrl-btn save-btn" onclick="exportDatabaseToFile()">
+                            Export
+                            <img src="images/export-svgrepo-com.svg" alt="" class="btn-icon">
+                        </button>
+                        <button type="button" class="ctrl-btn add-trigger" onclick="handleUnifiedAddStepClick()"><img src="images/plus-svgrepo-com.svg" alt="" class="btn-icon"> Add Step</button>
+                        
+                        
+                        <!-- LOGOUT BUTTON -->
+                        <button type="button" class="ctrl-btn cancel-btn" id="logout-button" style="margin-left: 10px;">Log Out</button>
+                    </div>
+                </header>
+                <div id="addStepModal" class="hidden" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); display:flex; justify-content:center; align-items:center; z-index:9999;">
+                    <div style="background:white; padding:25px; border-radius:8px; width:350px; box-shadow:0 4px 6px rgba(0,0,0,0.1);">
+                        <h3>Select Step Position</h3>
+                        <p>Enter the step number to insert at (or leave blank to add to the end):</p>
+                        <input type="number" id="stepInput" placeholder="e.g. 2" style="width:100%; padding:8px; margin-bottom:15px; box-sizing:border-box;">
+                        <div style="display:flex; gap:10px;">
+                            <button onclick="submitCustomPrompt()" style="padding:8px 16px;">OK</button>
+                            <button onclick="closeCustomPrompt()" style="padding:8px 16px;">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+
+                <main class="dash-content" id="dynamicQuestionsContainer">
+                    </main>
+
+                <div class="dash-content">
+                    <div class="results-wrapper hidden" id="cardResults">
+                        <div class="results-bar-header">
+                            <h3>⚡ Matching Clinical Trial Allocations</h3>
+                            <span class="badge" id="matchBadge">0 Matches</span>
+                        </div>
+                        <div id="resultsContent"></div>
+                        <button type="button" class="continue-btn hidden" id="continueBtn" onclick="advanceWorkflow()">
+                            Advance to Next Protocol Stage &rarr;
+                        </button>
+                    </div>
+                </div>
+
+                <footer class="dash-footer">
+                    <button type="button" class="reset-btn" onclick="resetWorkflowEngine()">Reset Screening Protocol</button>
+                </footer>
+            </div>
+
+
+            <div class="dashboard-container hidden" id="creatorView" style="position: relative; z-index: 10;">
+                <header class="dash-header creator-header">
+                    <div class="brand">
+                        <h1 id="pageViewModeTitle">Protocol Stage Configurator</h1>
+                    </div>
+                    <button type="button" class="ctrl-btn cancel-btn" onclick="closeControlPage()">&larr; Back to Dashboard</button>
+                </header>
+
+                <main class="dash-content">
+                    
+                    <div class="creator-intro">
+                        <h2><span id="managementActionLabel">Create</span> Step Entry <span id="autoStepBadge" class="step-counter-badge">--</span></h2>
+                        <p id="routingEngineHelperText">The system automatically links this new step into the end of your protocol chain.</p>
+                    </div>
+
+                    <div class="management-form">
+                        <div class="form-section">
+                            <h3>1. Core Step Parameters</h3>
+                            <div class="form-grid">
+                                <div class="form-group full-width" style="margin-bottom: 15px;">
+                                    <label for="newTitle" style="display: block; margin-bottom: 6px; font-weight: 600; color: #334155;">Card Section Title</label>
+                                    <textarea id="newTitle" rows="2" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="e.g., Diagnosis Verification (E)" style="width: 100%; box-sizing: border-box; display: block; padding: 8px; border: 1px solid var(--border-color); border-radius: 4px; resize: vertical; background: var(--bg-surface);"></textarea>
+                                </div>
+                                
+                                <div class="form-group full-width" style="margin-bottom: 15px;">
+                                    <label for="newPrompt" style="display: block; margin-bottom: 6px; font-weight: 600; color: #334155;">Question / Clinical Prompt Text</label>
+                                    <textarea id="newPrompt" rows="3" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="e.g., Is there an active history of atrial fibrillation?" style="width: 100%; box-sizing: border-box; display: block; padding: 8px; border: 1px solid var(--border-color); border-radius: 4px; resize: vertical; background: var(--bg-surface);"></textarea>
+                                </div>
+
+                                <!-- Clean Integrated Card Appearance Panel -->
+                                <div class="form-group full-width" style="margin-bottom: 15px; background: #f8fafc; border: 1px solid var(--border-color); border-radius: 6px; padding: 16px;">
+                                    <label class="color-label" style="display: block; margin-bottom: 10px; font-weight: 600; color: #334155;">Card Appearance & Accent Color</label>
+                                    
+                                    <div style="display: flex; gap: 24px; align-items: center; flex-wrap: wrap;">
+                                        <div style="display: flex; flex-direction: column; gap: 10px;">
+                                            <div class="color-presets" style="display: flex; gap: 8px; align-items: center;">
+                                                <button type="button" class="preset-btn" style="background: #2563eb;" data-color="#2563eb" onclick="setPresetColor('#2563eb')"></button>
+                                                <button type="button" class="preset-btn" style="background: #16a34a;" data-color="#16a34a" onclick="setPresetColor('#16a34a')"></button>
+                                                <button type="button" class="preset-btn" style="background: #dc2626;" data-color="#dc2626" onclick="setPresetColor('#dc2626')"></button>
+                                                <button type="button" class="preset-btn" style="background: #9333ea;" data-color="#9333ea" onclick="setPresetColor('#9333ea')"></button>
+                                                <button type="button" class="preset-btn" style="background: #475569;" data-color="#475569" onclick="setPresetColor('#475569')"></button>
+                                                <button type="button" class="preset-btn clear-preset" title="Default Look" onclick="setPresetColor('')">✕</button>
+                                            </div>
+                                            
+                                            <div style="display: flex; align-items: center; gap: 10px;">
+                                                <input type="color" id="newCardColor" oninput="handleCustomColor(this.value)" style="width: 38px; height: 32px; padding: 2px; border: 1px solid var(--border-color); border-radius: 4px; cursor: pointer; background: var(--bg-surface);">
+                                                <span id="cardColorStatus" style="font-size: 12px; color: var(--text-muted); font-weight: 500;">No custom color active</span>
+                                            </div>
+                                        </div>
+
+                                        <!-- Live Miniature Preview Container -->
+                                        <div id="cardLivePreview" style="flex: 1; min-width: 220px; padding: 10px 14px; background: white; border: 1px solid var(--border-color); border-radius: 4px; border-left: 4px solid #2563eb; box-shadow: 0 1px 2px rgba(0,0,0,0.02);">
+                                            <div style="font-size: 10px; font-weight: 700; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.5px; margin-bottom: 2px;">Preview Component</div>
+                                            <div id="previewCardTitleText" style="font-size: 13px; font-weight: 600; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Card Section Title</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-section">
+                            <h3>2. Configured Trial Options for this Step</h3>
+                            <div id="queuedTrialsContainer" class="queued-options-list">
+                                <p class="empty-state-text">No trial allocation options attached to this step yet.</p>
+                            </div>
+                        </div>
+
+                        <div class="form-section trial-builder-card" id="trialDraftingCard">
+                            <h3 style="color: #2563eb; margin-bottom: 15px;" id="trialFormActionHeading">➕ Add / Draft a Trial Option</h3>
+                            
+                            <div class="form-grid">
+                                <div class="form-group" style="margin-bottom: 15px;">
+                                    <label for="tName" style="display: block; margin-bottom: 6px; font-weight: 600; color: #334155;">Trial Program Name</label>
+                                    <input type="text" id="tName" placeholder="e.g., TWIST-2" style="width: 100%; box-sizing: border-box; display: block; padding: 8px; border: 1px solid #cbd5e1; border-radius: 4px;">
+                                </div>
+                                <div class="form-group" style="margin-bottom: 15px;">
+                                    <label for="tContact" style="display: block; margin-bottom: 6px; font-weight: 600; color: #334155;">Primary Coordinator Contact Info</label>
+                                    <input type="text" id="tContact" placeholder="e.g., RC Name — 905 555 0192" style="width: 100%; box-sizing: border-box; display: block; padding: 8px; border: 1px solid #cbd5e1; border-radius: 4px;">
+                                </div>
+                                <div class="form-group full-width" style="margin-bottom: 15px;">
+                                    <label for="tDesc" style="display: block; margin-bottom: 6px; font-weight: 600; color: #334155;">Trial Description Summary</label>
+                                    <textarea id="tDesc" rows="2" placeholder="Provide a brief abstract summary detailing the intent and context parameters..." style="width: 100%; box-sizing: border-box; display: block; resize: vertical; padding: 8px; border: 1px solid #cbd5e1; border-radius: 4px;"></textarea>
+                                </div>
+                            </div>
+
+                            <div class="bullet-builder-block" style="margin-top: 20px; padding-top: 15px; border-top: 1px solid #e2e8f0;">
+                                <h3 style="margin-bottom: 15px;">3. Content Source Options Configuration</h3>
+                                
+                                <div class="form-group" style="margin-bottom: 20px;">
+                                    <label for="contentModeSwitcher" style="display: block; margin-bottom: 6px; font-weight: 600; color: #334155;">Select Input Method:</label>
+                                    <select id="contentModeSwitcher" onchange="toggleContentMode()" style="width: 100%; max-width: 300px; padding: 8px; border-radius: 4px; border: 1px solid #cbd5e1; background: white; cursor: pointer;">
+                                        <option value="bullets">Bullet Points (Criteria)</option>
+                                        <option value="pdf">Upload/View PDF Reference</option>
+                                    </select>
+                                </div>
+
+                                <div id="bulletModeContainer" class="mode-container">
+                                    <div class="form-group full-width" style="margin-bottom: 10px;">
+                                        <label for="bulletInput" style="display: block; margin-bottom: 6px; font-weight: 600; color: #334155;">Inclusion Eligibility Criteria (Bullet Points for this Option)</label>
+                                        <div class="bullet-input-row" style="display: flex; gap: 8px;">
+                                            <input type="text" id="bulletInput" placeholder="Type a standalone criteria condition phrase..." style="flex: 1; box-sizing: border-box; padding: 8px; border: 1px solid #cbd5e1; border-radius: 4px;">
+                                            <button type="button" class="add-bullet-btn" onclick="addBulletPointToDraft()" style="cursor: pointer; padding: 8px 16px; background: #0f172a; color: white; border: none; border-radius: 4px; font-weight: 600;">+ Add Bullet</button>
+                                        </div>
+                                    </div>
+                                    <ul class="live-bullet-preview" id="bulletPreviewList" style="padding-left: 0; list-style: none; margin-top: 10px;"></ul>
+                                </div>
+
+                                <div id="pdfModeContainer" class="mode-container hidden">
+                                    <div class="form-group full-width">
+                                        <label for="pdfUpload" style="display: block; margin-bottom: 6px; font-weight: 600; color: #334155;">Upload Reference Protocol(s) (PDF)</label>
+                                        <input type="file" id="pdfUpload" accept="application/pdf" multiple class="form-input" style="display: block; margin-bottom: 10px;">
+                                        <div id="pdfFilesList" style="margin-top: 15px; border: 2px dashed #cbd5e1; padding: 10px; background: #f8fafc; min-height: 80px; border-radius: 6px;">
+                                            <p style="color: #64748b; text-align: center; padding: 30px 10px;">No documents uploaded yet. Select one or more PDF files above.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="option-form-actions-row" style="margin-top: 25px; display: flex; gap: 10px;">
+                                <button type="button" class="add-option-btn" id="commitTrialBtn" onclick="commitOptionToStepQueue()">Attach Option to Step Data Matrix</button>
+                                <button type="button" class="ctrl-btn cancel-btn hidden" id="cancelTrialEditBtn" onclick="clearDraftOptionForm()">Cancel Edit</button>
+                            </div>
+                        </div>
+
+                        <button type="button" class="submit-btn active-submit" id="formSubmitBtn" onclick="saveNewStepAndReturn()" style="margin-top: 25px;">Save Complete Step with Options</button>
+                    </div>
+                </main>
+            </div>
+            <div id="fullscreenPdfOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(4px); z-index: 9999; align-items: center; justify-content: center; padding: 25px; box-sizing: border-box;">
+                <div style="background: white; width: 100%; height: 100%; max-width: 1500px; max-height: 900px; border-radius: 8px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.35);">
+                    <header style="padding: 15px 25px; background: #1e3a8a; color: white; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #1e40af;">
+                        <h3 id="fullscreenPdfTitle" style="margin: 0; font-size: 18px; font-weight: 600;">Protocol Reference Viewport</h3>
+                        <button type="button" onclick="closeFullscreenPdfViewer()" style="background: #dc2626; color: white; border: none; padding: 8px 16px; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 13px; transition: background 0.2s;">
+                            ✕ Close Viewer
+                        </button>
+                    </header>
+                    <div style="flex: 1; background: #475569; padding: 12px; display: flex; align-items: center; justify-content: center;">
+                        <iframe id="fullscreenPdfFrame" src="" style="width: 100%; height: 100%; border: none; background: white; border-radius: 4px;"></iframe>
+                    </div>
+                </div>
+            </div>
+
+        </div> <!-- END APP CONTAINER -->
+
+        <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
+        <script src="Scripts/crypto-utils.js"></script>
+        <script src="Scripts/firebase-sync.js"></script>
+        <script src="Scripts/app-bootstrap.js"></script>
+        <script src="Scripts/workflow-ui.js"></script>
+        <script src="Scripts/pdf-tools.js"></script>
+        <script src="Scripts/storage-tools.js"></script>   
+        <script src="Scripts/editor-tools.js"></script>
+        <script src="Scripts/sidebar-drag.js"></script>
+    </body>
+</html>
